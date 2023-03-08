@@ -4,7 +4,7 @@ def main():
     db_name = 'database.sqlite'
     conn = connectToDB(db_name)
 
-    create_student(conn, ("Kalle",))
+    initDatabaseTables(conn)
 
     return None
 
@@ -19,17 +19,45 @@ def connectToDB(db_name):
     return conn
 
 
-def create_student(conn, student):
-    sql = ''' INSERT INTO Student(FirstName)
-              VALUES(?) '''
+def initDatabaseTables(conn):
+    student = '''
+        CREATE TABLE IF NOT EXISTS
+            Student(
+                FirstName,
+                LastName,
+                StudentID,
+                GPA,
+                Email
+            );
+    '''
+    
+    course = '''
+        CREATE TABLE IF NOT EXISTS 
+            Course (
+                CourseID,
+                points,
+                Length,
+                TeacherID
+            );
+    '''
+    
+    teacher = '''
+        CREATE TABLE IF NOT EXISTS 
+            Teacher (
+                TeacherID,
+                FirstName,
+                LastName,
+                Email
+            );
+    '''
+    
     cur = conn.cursor()
-    cur.execute(sql, student)
-    conn.commit()
 
-    everything = cur.execute('SELECT * FROM Student')
-    for row in everything:
-        print(row[0])
-    print(everything)
+    cur.execute(student)
+    cur.execute(course)
+    cur.execute(teacher)
+
+    conn.commit()
 
     return cur.lastrowid
 
