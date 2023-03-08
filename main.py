@@ -19,6 +19,27 @@ def connectToDB(db_name):
     return conn
 
 
+def addDataToTable(conn, table, data):
+
+    cur = conn.cursor()
+
+    if table == "Student":
+        cur.execute(f'''
+        INSERT INTO 
+            Student(
+                FirstName,
+                LastName,
+                StudentID,
+                GPA,
+                Email
+            )
+        VALUES (?,?,?,?,?)
+        ''', data
+    )
+
+    return None
+
+
 def initDatabaseTables(conn):
     student = '''
         CREATE TABLE IF NOT EXISTS
