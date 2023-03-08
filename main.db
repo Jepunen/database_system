@@ -1,8 +1,0 @@
--- Create table
-
-CREATE TABLE IF NOT EXISTS Student (
-    StudentID,
-    FirstName,
-    LastName,
-    Email
-);
