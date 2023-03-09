@@ -41,42 +41,73 @@ def addDataToTable(conn, table, data):
 
 
 def initDatabaseTables(conn):
-    student = '''
-        CREATE TABLE IF NOT EXISTS
-            Student(
-                FirstName,
-                LastName,
-                StudentID,
-                GPA,
-                Email
-            );
+    customers = '''
+        CREATE TABLE customers (
+            customer_id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            phone TEXT,
+            address TEXT);
     '''
     
-    course = '''
-        CREATE TABLE IF NOT EXISTS 
-            Course (
-                CourseID,
-                points,
-                Length,
-                TeacherID
-            );
+    orders = '''
+        CREATE TABLE orders (
+            order_id INTEGER PRIMARY KEY,
+            customer_id INTEGER NOT NULL,
+            order_date TEXT NOT NULL,
+            total_cost REAL NOT NULL,
+            FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+        );
     '''
     
-    teacher = '''
-        CREATE TABLE IF NOT EXISTS 
-            Teacher (
-                TeacherID,
-                FirstName,
-                LastName,
-                Email
-            );
+    products = '''
+        CREATE TABLE products (
+            product_id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            price REAL NOT NULL
+        );
+    '''
+
+    orderDetails = '''
+        CREATE TABLE order_details (
+            order_id INTEGER NOT NULL,
+            product_id INTEGER NOT NULL,
+            quantity INTEGER NOT NULL,
+            PRIMARY KEY (order_id, product_id),
+            FOREIGN KEY (order_id) REFERENCES orders(order_id),
+             FOREIGN KEY (product_id) REFERENCES products(product_id)
+        );
+    '''
+
+    employees = '''
+        CREATE TABLE employees (
+            employee_id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            phone TEXT,
+            address TEXT,
+            hire_date TEXT NOT NULL,
+            salary REAL NOT NULL
+        );
+    '''
+
+    employee_roles = '''
+        CREATE TABLE employee_roles (
+            employee_id INTEGER NOT NULL,
+            role TEXT NOT NULL,
+            PRIMARY KEY (employee_id, role),
+            FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+        );
     '''
     
     cur = conn.cursor()
 
-    cur.execute(student)
-    cur.execute(course)
-    cur.execute(teacher)
+    cur.execute(customers)
+    cur.execute(orders)
+    cur.execute(products)
+    cur.execute(orderDetails)
+    cur.execute(employees)
+    cur.execute(employee_roles)
 
     conn.commit()
 
