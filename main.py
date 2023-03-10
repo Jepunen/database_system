@@ -1,10 +1,31 @@
 import sqlite3
+import PySimpleGUI as sg
 
 def main():
+
+    # Connect to the database
     db_name = 'database.sqlite'
     conn = connectToDB(db_name)
 
-    initDatabaseTables(conn)
+    sg.theme('DarkPurple7')
+
+    # All the stuff inside your window.
+    layout = [  [sg.Text('Some text on Row 1')],
+                [sg.Output(s=(30,5))],
+                [sg.Button('Ok'), sg.Button('Cancel')] ]
+
+    # Create the Window
+    window = sg.Window('Window Title', layout)
+
+    # Event Loop to process "events" and get the "values" of the inputs
+    while True:
+        event, values = window.read()
+
+        if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
+            break
+        print('You entered ', values[0])
+        if event
+    window.close()
 
     return None
 
@@ -46,8 +67,8 @@ def initDatabaseTables(conn):
             customer_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
-            phone TEXT,
-            address TEXT);
+            address TEXT
+        );
     '''
     
     orders = '''
@@ -55,7 +76,7 @@ def initDatabaseTables(conn):
             order_id INTEGER PRIMARY KEY,
             customer_id INTEGER NOT NULL,
             order_date TEXT NOT NULL,
-            total_cost REAL NOT NULL,
+            total_cost FLOAT NOT NULL,
             FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
         );
     '''
@@ -64,7 +85,7 @@ def initDatabaseTables(conn):
         CREATE TABLE products (
             product_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
-            price REAL NOT NULL
+            price FLOAT NOT NULL
         );
     '''
 
@@ -75,7 +96,7 @@ def initDatabaseTables(conn):
             quantity INTEGER NOT NULL,
             PRIMARY KEY (order_id, product_id),
             FOREIGN KEY (order_id) REFERENCES orders(order_id),
-             FOREIGN KEY (product_id) REFERENCES products(product_id)
+            FOREIGN KEY (product_id) REFERENCES products(product_id)
         );
     '''
 
@@ -84,10 +105,7 @@ def initDatabaseTables(conn):
             employee_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
-            phone TEXT,
-            address TEXT,
-            hire_date TEXT NOT NULL,
-            salary REAL NOT NULL
+            salary FLOAT NOT NULL
         );
     '''
 
