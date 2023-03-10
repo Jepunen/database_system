@@ -48,6 +48,7 @@ def windowLoop(window, conn):
             break
 
         elif event == 'Ok':
+            clearFields(window)
             cur = conn.cursor()
             sql = 'SELECT * FROM customers'
             res = cur.execute(sql)
@@ -87,11 +88,17 @@ def windowLoop(window, conn):
             window['insert_input_address'].update(visible=True)
         
         elif event == 'apply_btn':
-            updateCustomersTable(conn, values['update_combo'], values['update_text'], values['customer_id_input'])
+            customerID = values['customer_id_input']
+            newValue = values['update_text']
+            column = values['update_combo']
+            updateCustomersTable(window, conn, column, newValue, customerID)
 
     window.close()
     return None
 
+def clearFields(window):
+    window['multi'].update('')
+    return None
 
 def hideInsert(window):
     window['insert_input_id'].update(visible=False)
@@ -118,17 +125,14 @@ def connectToDB(db_name):
     return conn
 
 
-def updateCustomersTable(conn, column, newValue, customerID):
+def updateCustomersTable(window, conn, column, newValue, customerID):
     cur = conn.cursor()
 
-    sql = f'''
-    UPDATE customers
-    SET {column} = {newValue}
-    WHERE
-        customer_id = {customerID};
-    '''
+    sql = "UPDATE customers SET {} = '{}' WHERE customer_id = {};".format(column, newValue, customerID)
     cur.execute(sql)
     conn.commit()
+
+    window['multi'].update(f"customer's {customerID} {column} updated to {newValue}")
     return None
 
 def addDataToTable(conn):
