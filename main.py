@@ -10,9 +10,15 @@ def main():
     sg.theme('DarkPurple7')
 
     # All the stuff inside your window.
-    layout = [  [sg.Text('Some text on Row 1')],
-                [sg.Output(s=(30,5))],
-                [sg.Button('Ok'), sg.Button('Cancel')] ]
+    layout = [  [
+                    sg.Combo(['Update', 'Delete', 'Insert'], key='type_combo', readonly=True, default_value='Update', enable_events=True),
+                    sg.Text('column'),
+                    sg.Combo(['customer_id', 'name', 'email', 'address'], readonly=True, default_value='customer_id')
+                ],
+                [sg.Text('Output for tables')],
+                [sg.Multiline(key='multi', size=(30, 10), disabled=True)],
+                [sg.Button('Ok'), sg.Button('Cancel')]
+            ]
 
     # Create the Window
     window = sg.Window('Window Title', layout)
@@ -23,10 +29,17 @@ def main():
 
         if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
             break
-        print('You entered ', values[0])
-        if event
-    window.close()
 
+        elif event == 'Ok':
+            cur = conn.cursor()
+            sql = 'SELECT * FROM customers'
+            res = cur.execute(sql)
+            for row in res:
+                window['multi'].print(row)
+        elif event == 'type_combo':
+            continue
+
+    window.close()
     return None
 
 
@@ -40,30 +53,27 @@ def connectToDB(db_name):
     return conn
 
 
-def addDataToTable(conn, table, data):
+def addDataToTable(conn):
 
     cur = conn.cursor()
-
-    if table == "Student":
-        cur.execute(f'''
-        INSERT INTO 
-            Student(
-                FirstName,
-                LastName,
-                StudentID,
-                GPA,
-                Email
-            )
-        VALUES (?,?,?,?,?)
-        ''', data
-    )
+    sql = '''
+    INSERT INTO customers(
+            customer_id,
+            name,
+            email,
+            address
+        )
+        VALUES (012345, 'Jorma', 'Email', 'Osoite');
+    '''
+    cur.execute(sql)
+    conn.commit()
 
     return None
 
 
 def initDatabaseTables(conn):
     customers = '''
-        CREATE TABLE customers (
+        CREATE TABLE IF NOT EXISTS customers (
             customer_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
@@ -72,7 +82,7 @@ def initDatabaseTables(conn):
     '''
     
     orders = '''
-        CREATE TABLE orders (
+        CREATE TABLE IF NOT EXISTS orders (
             order_id INTEGER PRIMARY KEY,
             customer_id INTEGER NOT NULL,
             order_date TEXT NOT NULL,
@@ -82,7 +92,7 @@ def initDatabaseTables(conn):
     '''
     
     products = '''
-        CREATE TABLE products (
+        CREATE TABLE IF NOT EXISTS products (
             product_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             price FLOAT NOT NULL
@@ -90,7 +100,7 @@ def initDatabaseTables(conn):
     '''
 
     orderDetails = '''
-        CREATE TABLE order_details (
+        CREATE TABLE IF NOT EXISTS order_details (
             order_id INTEGER NOT NULL,
             product_id INTEGER NOT NULL,
             quantity INTEGER NOT NULL,
@@ -101,7 +111,7 @@ def initDatabaseTables(conn):
     '''
 
     employees = '''
-        CREATE TABLE employees (
+        CREATE TABLE IF NOT EXISTS employees (
             employee_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
@@ -110,7 +120,7 @@ def initDatabaseTables(conn):
     '''
 
     employee_roles = '''
-        CREATE TABLE employee_roles (
+        CREATE TABLE IF NOT EXISTS employee_roles (
             employee_id INTEGER NOT NULL,
             role TEXT NOT NULL,
             PRIMARY KEY (employee_id, role),
