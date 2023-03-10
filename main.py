@@ -89,9 +89,18 @@ def windowLoop(window, conn):
         
         elif event == 'apply_btn':
             customerID = values['customer_id_input']
-            newValue = values['update_text']
-            column = values['update_combo']
-            updateCustomersTable(window, conn, column, newValue, customerID)
+            if values['type_combo'] == 'Update':
+                newValue = values['update_text']
+                column = values['update_combo']
+                updateCustomersTable(window, conn, column, newValue, customerID)
+            elif values['type_combo'] == 'Insert':
+                customerID = values['insert_input_id']
+                name = values['insert_input_name']
+                email = values['insert_input_email']
+                address = values['insert_input_address']
+                insertIntoCustomersTable(window, conn, customerID, name, email, address)
+            elif values['type_combo'] == 'Delete':
+                deleteFromCustomersTable(window, conn, customerID)
 
     window.close()
     return None
@@ -132,7 +141,25 @@ def updateCustomersTable(window, conn, column, newValue, customerID):
     cur.execute(sql)
     conn.commit()
 
-    window['multi'].update(f"customer's {customerID} {column} updated to {newValue}")
+    window['multi'].update(f"Customer's {customerID} {column} updated to {newValue}")
+    return None
+
+def insertIntoCustomersTable(window, conn, cid, name, email, address):
+    cur = conn.cursor()
+
+    cur.execute('INSERT INTO customers(customer_id, name, email, address) VALUES(?, ?, ?, ?);', [cid, name, email, address])
+    conn.commit()
+
+    window['multi'].update(f"Added {name} to customers")
+    return None
+
+def deleteFromCustomersTable(window, conn, cID):
+    cur = conn.cursor()
+
+    cur.execute('DELETE FROM customers WHERE customer_id = ?;', [cID])
+    conn.commit()
+
+    window['multi'].update(f"Deleted customer with ID {cID}")
     return None
 
 def addDataToTable(conn):
