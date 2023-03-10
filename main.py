@@ -7,23 +7,38 @@ def main():
     db_name = 'database.sqlite'
     conn = connectToDB(db_name)
 
-    sg.theme('DarkPurple7')
-
+    ### PySimpleGUI ###
     # All the stuff inside your window.
+    sg.theme('DarkPurple7')
     layout = [  [
                     sg.Combo(['Update', 'Delete', 'Insert'], key='type_combo', readonly=True, default_value='Update', enable_events=True),
-                    sg.Text('column'),
-                    sg.Combo(['customer_id', 'name', 'email', 'address'], readonly=True, default_value='customer_id')
+                    sg.Text('row with customer_id', key='combo_text'),
+                    sg.InputText(key='customer_id_input', size=10, visible=True)
                 ],
+                [sg.Text('customer_id | name | email | address', visible=False, key='insert_text')],
+                [
+                    sg.Combo(['customer_id', 'name', 'email', 'address'], readonly=True, default_value='customer_id', key='update_combo'),
+                    sg.Text('new value:', key='new_value_text'),
+                    sg.InputText(key='update_text',visible=True, size=10),
+                    sg.InputText(key='insert_input_id',visible=False, size=10),
+                    sg.InputText(key='insert_input_name',visible=False, size=10),
+                    sg.InputText(key='insert_input_email',visible=False, size=10),
+                    sg.InputText(key='insert_input_address',visible=False, size=10)
+                ],
+                [sg.Button('Update', key='apply_btn')],
                 [sg.Text('Output for tables')],
-                [sg.Multiline(key='multi', size=(30, 10), disabled=True)],
+                [sg.Multiline(key='multi', size=(50, 10), disabled=True)],
                 [sg.Button('Ok'), sg.Button('Cancel')]
             ]
 
     # Create the Window
     window = sg.Window('Window Title', layout)
+    windowLoop(window, conn)
+    ### PySimpleGUI END ###
 
-    # Event Loop to process "events" and get the "values" of the inputs
+    return None
+
+def windowLoop(window, conn):
     while True:
         event, values = window.read()
 
@@ -36,12 +51,55 @@ def main():
             res = cur.execute(sql)
             for row in res:
                 window['multi'].print(row)
-        elif event == 'type_combo':
-            continue
+        elif event == 'type_combo' and values['type_combo'] == 'Update':
+            hideInsert(window)
 
+            window['customer_id_input'].update(visible=True)
+            window['update_combo'].update(visible=True)
+            window['update_text'].update(visible=True)
+            window['new_value_text'].update(visible=True)
+            window['combo_text'].update('row with customer_id')
+            window['combo_text'].update('column')
+            window['apply_btn'].update('Update')
+
+        elif event == 'type_combo' and values['type_combo'] == 'Delete':
+            hideInsert(window)
+            hideUpdate(window)
+            
+            window['combo_text'].update('row with customer_id')
+            window['customer_id_input'].update(visible=True)
+            window['apply_btn'].update('Delete')
+
+        elif event == 'type_combo' and values['type_combo'] == 'Insert':
+            hideUpdate(window)
+            hideDelete(window)
+
+            window['combo_text'].update('new column to customers')
+            window['apply_btn'].update('Insert')
+
+            window['insert_text'].update(visible=True)
+            window['insert_input_id'].update(visible=True)
+            window['insert_input_name'].update(visible=True)
+            window['insert_input_email'].update(visible=True)
+            window['insert_input_address'].update(visible=True)
     window.close()
     return None
 
+
+def hideInsert(window):
+    window['insert_input_id'].update(visible=False)
+    window['insert_input_name'].update(visible=False)
+    window['insert_input_email'].update(visible=False)
+    window['insert_input_address'].update(visible=False)
+    window['insert_text'].update(visible=False)
+
+def hideUpdate(window):
+    window['update_combo'].update(visible=False)
+    window['update_text'].update(visible=False)
+    window['new_value_text'].update(visible=False)
+
+def hideDelete(window):
+    window['customer_id_input'].update(visible=False)
 
 def connectToDB(db_name):
     conn = None
