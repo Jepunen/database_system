@@ -6,6 +6,7 @@ def main():
     # Connect to the database
     db_name = 'database.sqlite'
     conn = connectToDB(db_name)
+    initDatabaseTables(conn)
 
     ### PySimpleGUI ###
     # All the stuff inside your window.
@@ -26,6 +27,7 @@ def main():
                     sg.InputText(key='insert_input_address',visible=False, size=10)
                 ],
                 [sg.Button('Update', key='apply_btn')],
+                [sg.Combo(['Get all customers with orders', 'example 2'], key='search_combo', default_value='Get all customers with orders'), sg.Button('Search')],
                 [sg.Text('Output for tables')],
                 [sg.Multiline(key='multi', size=(50, 10), disabled=True)],
                 [sg.Button('Ok'), sg.Button('Cancel')]
@@ -52,6 +54,7 @@ def windowLoop(window, conn):
             for row in res:
                 window['multi'].print(row)
         elif event == 'type_combo' and values['type_combo'] == 'Update':
+            # Update GUI
             hideInsert(window)
 
             window['customer_id_input'].update(visible=True)
@@ -82,6 +85,10 @@ def windowLoop(window, conn):
             window['insert_input_name'].update(visible=True)
             window['insert_input_email'].update(visible=True)
             window['insert_input_address'].update(visible=True)
+        
+        elif event == 'apply_btn':
+            updateCustomersTable(conn, values['update_combo'], values['update_text'], values['customer_id_input'])
+
     window.close()
     return None
 
@@ -110,6 +117,19 @@ def connectToDB(db_name):
         print(e)
     return conn
 
+
+def updateCustomersTable(conn, column, newValue, customerID):
+    cur = conn.cursor()
+
+    sql = f'''
+    UPDATE customers
+    SET {column} = {newValue}
+    WHERE
+        customer_id = {customerID};
+    '''
+    cur.execute(sql)
+    conn.commit()
+    return None
 
 def addDataToTable(conn):
 
