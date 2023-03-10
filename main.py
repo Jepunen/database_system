@@ -6,6 +6,8 @@ def main():
     # Connect to the database
     db_name = 'database.sqlite'
     conn = connectToDB(db_name)
+    addDataToTable(conn)
+    
 
     ### PySimpleGUI ###
     # All the stuff inside your window.
@@ -121,22 +123,74 @@ def addDataToTable(conn):
             email,
             address
         )
-        VALUES (012345, 'Jorma', 'Email', 'Osoite'),
+        VALUES 
             (112233, 'Maija', 'Vilkkumaa', 'Skinnarila'),
-            (000000, 'Jere', 'Puuro', 'Bunkkeri'),
+            (222222, 'Jere', 'Puuro', 'Bunkkeri'),
             (111111, 'Jeri', 'Kopteri' , 'KPC'),
             (987654, 'Pekka', 'Pekkanen', 'Pekkala');
-
+    '''
+    sql2 = '''
     INSERT INTO orders(
             order_id
             customer_id
             order_date
             total_cost
         )
-        VALUES (1122, 012345, 20200101, 49,00),
-        ()
+        VALUES (1122, 12345, 20200101, 49),
+        (2233, 112233, 20191612, 5),
+        (3344, 222222, 20191511, 69),
+        (5965, 111111, 20193112, 1);
+    '''
+    sql3 = '''
+    INSERT INTO products(
+            product_id
+            name
+            price
+        )
+        VALUES (7868, 'Tuoli', 25),
+        (7869, 'Lamppu', 21),
+        (7870, 'Sohva', 120),
+        (7871, 'Taso', 9);
+    '''
+    sql4 = '''
+    INSERT INTO order_details(
+            order_id
+            product_id
+            quantity
+        )
+        VALUES (1122, 7686, 1),
+        (2233, 7869, 1),
+        (3344, 7870, 1),
+        (5965, 7871, 2);
+    '''
+    sql5 = '''
+    INSERT INTO employees(
+            employee_id
+            name
+            email
+            salary
+        )
+        VALUES (9891, 'Olli-pekka', op@lut, 1000),
+        (9892, 'Juho', juhis@lut, 1500),
+        (9893, 'Jiri', jiri@lut, 10000),
+        (9894, 'Merja', merjis@lut, 50);
+    '''
+    sql6 = '''
+    INSERT INTO employee_roles(
+            employee_id
+            role
+        )
+        VALUES (9891, 'orja'),
+        (9892, 'juoksupoika'),
+        (9893, 'pomo'),
+        (9894, 'joulupukki');
     '''
     cur.execute(sql)
+    ##cur.execute(sql2)
+    ##cur.execute(sql3)
+    ##cur.execute(sql4)
+    ###cur.execute(sql5)
+    ###cur.execute(sql6)
     conn.commit()
 
     return None
