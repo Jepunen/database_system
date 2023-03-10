@@ -121,7 +121,20 @@ def addDataToTable(conn):
             email,
             address
         )
-        VALUES (012345, 'Jorma', 'Email', 'Osoite');
+        VALUES (012345, 'Jorma', 'Email', 'Osoite'),
+            (112233, 'Maija', 'Vilkkumaa', 'Skinnarila'),
+            (000000, 'Jere', 'Puuro', 'Bunkkeri'),
+            (111111, 'Jeri', 'Kopteri' , 'KPC'),
+            (987654, 'Pekka', 'Pekkanen', 'Pekkala');
+
+    INSERT INTO orders(
+            order_id
+            customer_id
+            order_date
+            total_cost
+        )
+        VALUES (1122, 012345, 20200101, 49,00),
+        ()
     '''
     cur.execute(sql)
     conn.commit()
@@ -143,7 +156,7 @@ def initDatabaseTables(conn):
         CREATE TABLE IF NOT EXISTS orders (
             order_id INTEGER PRIMARY KEY,
             customer_id INTEGER NOT NULL,
-            order_date TEXT NOT NULL,
+            order_date DATE NOT NULL,
             total_cost FLOAT NOT NULL,
             FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
         );
