@@ -27,6 +27,8 @@ def main():
                     sg.InputText(key='insert_input_address',visible=False, size=10)
                 ],
                 [sg.Button('Update', key='apply_btn')],
+                [sg.Text('Search a customer by customer_id')],
+                [sg.InputText(size=15, key='search_input'), sg.Button('Search', key='search_btn')],
                 [sg.Combo(['Get all customers with orders', 'example 2'], key='search_combo', default_value='Get all customers with orders'), sg.Button('Search')],
                 [sg.Text('Output for tables')],
                 [sg.Multiline(key='multi', size=(50, 10), disabled=True)],
@@ -102,6 +104,10 @@ def windowLoop(window, conn):
             elif values['type_combo'] == 'Delete':
                 deleteFromCustomersTable(window, conn, customerID)
 
+        elif event == 'search_btn':
+            clearFields(window)
+            searchFromCustomers(conn, window, values['search_input'])
+
     window.close()
     return None
 
@@ -133,7 +139,6 @@ def connectToDB(db_name):
         print(e)
     return conn
 
-
 def updateCustomersTable(window, conn, column, newValue, customerID):
     cur = conn.cursor()
 
@@ -160,6 +165,15 @@ def deleteFromCustomersTable(window, conn, cID):
     conn.commit()
 
     window['multi'].update(f"Deleted customer with ID {cID}")
+    return None
+
+def searchFromCustomers(conn, window, cID):
+
+    cur = conn.cursor()
+
+    for row in cur.execute('SELECT * FROM customers WHERE customer_id = ?', [cID]):
+        window['multi'].print(row)
+
     return None
 
 def addDataToTable(conn):
@@ -243,7 +257,6 @@ def addDataToTable(conn):
     conn.commit()
 
     return None
-
 
 def initDatabaseTables(conn):
     customers = '''
