@@ -114,6 +114,7 @@ def windowLoop(window, conn):
             searchFromCustomers(conn, window, values['search_input'])
         
         elif event == 'combo_search':
+            clearFields(window)
             if values['search_combo'] == 'List all employees':
                 searchWithQuery(window, conn, EMPLOYEES_QUERY)
             elif values['search_combo'] == 'List orders with cost of over 50':
@@ -208,7 +209,6 @@ def deleteFromCustomersTable(window, conn, cID):
 def searchFromCustomers(conn, window, cID):
     try:
         cur = conn.cursor()
-
         for row in cur.execute('SELECT * FROM customers WHERE customer_id = ?', [cID]):
             window['multi'].print(row)
     except Exception as e:
