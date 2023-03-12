@@ -6,7 +6,7 @@ from prettytable import from_db_cursor
 EMPLOYEES_QUERY = '''SELECT employee_id as 'ID', name as 'Name', email as 'Email', salary as 'Salary (€)' from employees''' ##lists employees of the database
 COST_QUERY = '''SELECT order_id as 'Order ID', customer_id as 'Customer ID', order_date as 'Order date', total_cost as 'Total cost' from orders WHERE total_cost > 50 ''' ## selects all orders which are over 50 (total cost)
 DATE_QUERY = '''SELECT order_id as 'Order ID', order_date as 'Date', total_cost as 'Total (€)' FROM Orders WHERE Order_Date='20200101' ''' ### selects an order made on the 1st day of 2020
-EMPLOYEES_QUERY = '''
+EMPLOYEE_ROLE_QUERY = '''
     SELECT employees.name, employee_roles.role
     FROM employees
     INNER JOIN employee_roles
@@ -332,8 +332,7 @@ def addDataToTable(conn):
         cur.execute(sql6)
         conn.commit()
     except Exception as e:
-        print(e)
-    return None
+        return None
 
 def initDatabaseTables(conn):
     try:
@@ -407,7 +406,6 @@ def initDatabaseTables(conn):
 
         conn.commit()
     except Exception as e:
-        print(e)
         return None
 
 main()
