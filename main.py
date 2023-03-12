@@ -1,18 +1,17 @@
 import sqlite3
 import PySimpleGUI as sg
+from prettytable import from_db_cursor
 
 ### Queries ###
 EMPLOYEES_QUERY = '''SELECT employee_id as 'ID', name as 'Name', email as 'Email', salary as 'Salary (€)' from employees''' ##lists employees of the database
 COST_QUERY = '''SELECT order_id as 'Order ID', customer_id as 'Customer ID', order_date as 'Order date', total_cost as 'Total cost' from orders WHERE total_cost > 50 ''' ## selects all orders which are over 50 (total cost)
-DATE_QUERY = '''SELECT * FROM Orders WHERE Order_Date='20200101' ''' ### selects an order made on the 1st day of 2020
-DEFAULTROLE_QUERY = '''
-    CREATE TRIGGER add_employee_role 
-    AFTER INSERT ON employees 
-    BEGIN
-    INSERT INTO employee_roles (employee_id, role)
-    VALUES (NEW.employee_id, 'Tuutori');
-    END;
-'''
+DATE_QUERY = '''SELECT order_id as 'Order ID', order_date as 'Date', total_cost as 'Total (€)' FROM Orders WHERE Order_Date='20200101' ''' ### selects an order made on the 1st day of 2020
+EMPLOYEES_QUERY = '''
+    SELECT employees.name, employee_roles.role
+    FROM employees
+    INNER JOIN employee_roles
+    ON employees.employee_id = employee_roles.employee_id;
+    '''
 JOIN_QUERY = '''
     SELECT customers.name as 'Name', orders.order_id as 'Order ID', orders.total_cost as 'Total cost', order_details.quantity as 'Quantity'
     FROM customers
@@ -52,7 +51,7 @@ def main():
                 [sg.Button('Update', key='apply_btn')],
                 [sg.Text('Search a customer by customer_id')],
                 [sg.InputText(size=15, key='search_input'), sg.Button('Search', key='search_btn')],
-                [sg.Combo(['List all employees', 'List orders with cost of over 50', 'List all orders from 1. Jan 2020', 'Switch ylipomo to juha-matti saksa (reksi)', 'List customers and their orders'], key='search_combo', default_value='List all employees', readonly=True), sg.Button('Search', key='combo_search')],
+                [sg.Combo(['List all employees', 'List orders with cost of over 50', 'List all orders from 1. Jan 2020', 'List employees and their roles', 'List customers and their orders'], key='search_combo', default_value='List all employees', readonly=True), sg.Button('Search', key='combo_search')],
                 [sg.Text('Output for tables')],
                 [sg.Multiline(key='multi', size=(50, 10), disabled=True)],
                 [sg.Button('List all customers'), sg.Button('Exit')]
@@ -77,8 +76,7 @@ def windowLoop(window, conn):
             cur = conn.cursor()
             sql = 'SELECT * FROM customers'
             res = cur.execute(sql)
-            for row in res:
-                window['multi'].print(row)
+            window['multi'].print(from_db_cursor(res))
         elif event == 'type_combo' and values['type_combo'] == 'Update':
             # Update GUI
             hideInsert(window)
@@ -139,8 +137,8 @@ def windowLoop(window, conn):
                 searchWithQuery(window, conn, COST_QUERY)
             elif values['search_combo'] == 'List all orders from 1. Jan 2020':
                 searchWithQuery(window, conn, DATE_QUERY)
-            elif values['search_combo'] == 'Switch ylipomo to juha-matti saksa (reksi)':
-                searchWithQuery(window, conn, BIGBOSS_QUERY)
+            elif values['search_combo'] == 'List employees and their roles':
+                searchWithQuery(window, conn, EMPLOYEES_QUERY)
             elif values['search_combo'] == 'List customers and their orders':
                 searchWithQuery(window, conn, JOIN_QUERY)
         
@@ -229,8 +227,8 @@ def deleteFromCustomersTable(window, conn, cID):
 def searchFromCustomers(conn, window, cID):
     try:
         cur = conn.cursor()
-        for row in cur.execute('SELECT * FROM customers WHERE customer_id = ?', [cID]):
-            window['multi'].print(row)
+        res = cur.execute('SELECT * FROM customers WHERE customer_id = ?', [cID])
+        window['multi'].print(from_db_cursor(res))
     except Exception as e:
         window['multi'].print(e)
     return None
@@ -239,9 +237,9 @@ def searchWithQuery(window, conn, query):
     try:
         cur = conn.cursor()
         results = cur.execute(query)
-        window['multi'].print(list(map(lambda x: x[0], cur.description)))
-        for row in results:
-            window['multi'].print(row)
+
+        table = from_db_cursor(results)
+        window['multi'].print(table)
     except Exception as e:
         window['multi'].print(e)
     return None
