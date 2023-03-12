@@ -7,7 +7,7 @@ import sqlite3
 import PySimpleGUI as sg
 from prettytable import from_db_cursor
 
-### Queries ###
+### Quaries ###
 EMPLOYEES_QUERY = '''SELECT employee_id as 'ID', name as 'Name', email as 'Email', salary as 'Salary (€)' from employees''' ##lists employees of the database
 COST_QUERY = '''SELECT order_id as 'Order ID', customer_id as 'Customer ID', order_date as 'Order date', total_cost as 'Total cost' from orders WHERE total_cost > 50 ''' ## selects all orders which are over 50 (total cost)
 DATE_QUERY = '''SELECT order_id as 'Order ID', order_date as 'Date', total_cost as 'Total (€)' FROM Orders WHERE Order_Date='20200101' ''' ### selects an order made on the 1st day of 2020
