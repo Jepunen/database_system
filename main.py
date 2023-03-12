@@ -354,7 +354,8 @@ def initDatabaseTables(conn):
                 customer_id INTEGER NOT NULL,
                 order_date DATE,
                 total_cost FLOAT NOT NULL,
-                FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON UPDATE CASCADE
+                FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON UPDATE CASCADE,
+                INDEX orders_customer_id (customer_id)
             );
         '''
         
@@ -362,7 +363,8 @@ def initDatabaseTables(conn):
             CREATE TABLE IF NOT EXISTS products (
                 product_id INTEGER PRIMARY KEY,
                 name TEXT NOT NULL,
-                price FLOAT NOT NULL
+                price FLOAT NOT NULL,
+                CHECK (price>0)
             );
         '''
 
@@ -374,6 +376,7 @@ def initDatabaseTables(conn):
                 PRIMARY KEY (order_id, product_id),
                 FOREIGN KEY (order_id) REFERENCES orders(order_id) ON UPDATE CASCADE, 
                 FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+                INDEX order_details_productid (productid)
             );
         '''
 
@@ -389,7 +392,7 @@ def initDatabaseTables(conn):
         employee_roles = '''
             CREATE TABLE IF NOT EXISTS employee_roles (
                 employee_id INTEGER NOT NULL,
-                role TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'Työmies',
                 PRIMARY KEY (employee_id, role),
                 FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
             );
