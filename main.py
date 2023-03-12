@@ -138,7 +138,7 @@ def windowLoop(window, conn):
             elif values['search_combo'] == 'List all orders from 1. Jan 2020':
                 searchWithQuery(window, conn, DATE_QUERY)
             elif values['search_combo'] == 'List employees and their roles':
-                searchWithQuery(window, conn, EMPLOYEES_QUERY)
+                searchWithQuery(window, conn, EMPLOYEE_ROLE_QUERY)
             elif values['search_combo'] == 'List customers and their orders':
                 searchWithQuery(window, conn, JOIN_QUERY)
         
