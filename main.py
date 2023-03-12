@@ -436,7 +436,7 @@ def initDatabaseTables(conn):
                 product_id INTEGER NOT NULL,
                 quantity INTEGER NOT NULL,
                 PRIMARY KEY (order_id, product_id),
-                FOREIGN KEY (order_id) REFERENCES orders(order_id), ON UPDATE CASCADE
+                FOREIGN KEY (order_id) REFERENCES orders(order_id) ON UPDATE CASCADE, 
                 FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
             );
         '''
