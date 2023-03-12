@@ -138,7 +138,7 @@ def windowLoop(window, conn):
             elif values['search_combo'] == 'List all orders from 1. Jan 2020':
                 searchWithQuery(window, conn, DATE_QUERY)
             elif values['search_combo'] == 'List employees and their roles':
-                searchWithQuery(window, conn, EMPLOYEES_QUERY)
+                searchWithQuery(window, conn, EMPLOYEE_ROLE_QUERY)
             elif values['search_combo'] == 'List customers and their orders':
                 searchWithQuery(window, conn, JOIN_QUERY)
         
@@ -307,11 +307,11 @@ def addDataToTable(conn):
                 email,
                 salary
             )
-            VALUES (9891, 'Olli-pekka', 'op@lut', 1000),
-            (9892, 'Juho', 'juhis@lut', 1500),
-            (9893, 'Jiri', 'jiri@lut', 10000),
-            (9894, 'Merja', 'merjis@lut', 50),
-            (9895, 'Boss', 'boss@lut', 20000);
+            VALUES (9891, 'Olli-pekka', 'op@lut.fi', 1000),
+            (9892, 'Juho', 'juhis@lut.fi', 1500),
+            (9893, 'Jiri', 'jiri@lut.fi', 10000),
+            (9894, 'Merja', 'merjis@lut.fi', 50),
+            (9895, 'Boss', 'boss@lut.fi', 20000);
         '''
         sql6 = '''
         INSERT INTO employee_roles(
@@ -320,7 +320,7 @@ def addDataToTable(conn):
             )
             VALUES (9891, 'Puurtarhuri'),
             (9892, 'juoksupoika'),
-            (9893, 'pomo'),
+            (9893, 'räppäri'),
             (9894, 'joulupukki'),
             (9895, 'ylipomo');
         '''
