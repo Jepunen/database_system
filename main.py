@@ -350,7 +350,7 @@ def initDatabaseTables(conn):
             customer_id INTEGER NOT NULL,
             order_date DATE,
             total_cost FLOAT NOT NULL,
-            FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+            FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON UPDATE CASCADE
         );
     '''
     
@@ -368,8 +368,8 @@ def initDatabaseTables(conn):
             product_id INTEGER NOT NULL,
             quantity INTEGER NOT NULL,
             PRIMARY KEY (order_id, product_id),
-            FOREIGN KEY (order_id) REFERENCES orders(order_id),
-            FOREIGN KEY (product_id) REFERENCES products(product_id)
+            FOREIGN KEY (order_id) REFERENCES orders(order_id), ON UPDATE CASCADE
+            FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
         );
     '''
 
@@ -387,7 +387,7 @@ def initDatabaseTables(conn):
             employee_id INTEGER NOT NULL,
             role TEXT NOT NULL,
             PRIMARY KEY (employee_id, role),
-            FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+            FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
         );
     '''
     
@@ -418,7 +418,7 @@ def initDatabaseTables(conn):
                 customer_id INTEGER NOT NULL,
                 order_date DATE,
                 total_cost FLOAT NOT NULL,
-                FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+                FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON UPDATE CASCADE
             );
         '''
         
@@ -436,8 +436,8 @@ def initDatabaseTables(conn):
                 product_id INTEGER NOT NULL,
                 quantity INTEGER NOT NULL,
                 PRIMARY KEY (order_id, product_id),
-                FOREIGN KEY (order_id) REFERENCES orders(order_id),
-                FOREIGN KEY (product_id) REFERENCES products(product_id)
+                FOREIGN KEY (order_id) REFERENCES orders(order_id), ON UPDATE CASCADE
+                FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
             );
         '''
 
@@ -455,7 +455,7 @@ def initDatabaseTables(conn):
                 employee_id INTEGER NOT NULL,
                 role TEXT NOT NULL,
                 PRIMARY KEY (employee_id, role),
-                FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+                FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
             );
         '''
         
