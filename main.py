@@ -7,6 +7,7 @@ def main():
     db_name = 'database.sqlite'
     conn = connectToDB(db_name)
     initDatabaseTables(conn)
+    addDataToTable(conn)
 
     ### PySimpleGUI ###
     # All the stuff inside your window.
@@ -146,6 +147,7 @@ def addDataToTable(conn):
             address
         )
         VALUES 
+            (123456, 'Poika', 'Email', 'Osoite'),
             (112233, 'Maija', 'Vilkkumaa', 'Skinnarila'),
             (222222, 'Jere', 'Puuro', 'Bunkkeri'),
             (111111, 'Jeri', 'Kopteri' , 'KPC'),
@@ -153,69 +155,82 @@ def addDataToTable(conn):
     '''
     sql2 = '''
     INSERT INTO orders(
-            order_id
-            customer_id
-            order_date
+            order_id,
+            customer_id,
+            order_date,
             total_cost
         )
-        VALUES (1122, 12345, 20200101, 49),
-        (2233, 112233, 20191612, 5),
-        (3344, 222222, 20191511, 69),
-        (5965, 111111, 20193112, 1);
+        VALUES (1010, 987654, 20121204, 300),
+        (1122, 123456, 20200101, 49),
+        (2233, 112233, 20191216, 5),
+        (3344, 222222, 20191115, 69),
+        (5965, 111111, 20120314, 1);
+        
     '''
     sql3 = '''
     INSERT INTO products(
-            product_id
-            name
+            product_id,
+            name,
             price
         )
-        VALUES (7868, 'Tuoli', 25),
+        VALUES (7687, 'Patja', 13),
+        (7868, 'Tuoli', 25),
         (7869, 'Lamppu', 21),
         (7870, 'Sohva', 120),
         (7871, 'Taso', 9);
     '''
     sql4 = '''
     INSERT INTO order_details(
-            order_id
-            product_id
+            order_id,
+            product_id,
             quantity
         )
-        VALUES (1122, 7686, 1),
+        VALUES (1010, 7687, 2),
+        (1122, 7686, 1),
         (2233, 7869, 1),
         (3344, 7870, 1),
         (5965, 7871, 2);
     '''
     sql5 = '''
     INSERT INTO employees(
-            employee_id
-            name
-            email
+            employee_id,
+            name,
+            email,
             salary
         )
-        VALUES (9891, 'Olli-pekka', op@lut, 1000),
-        (9892, 'Juho', juhis@lut, 1500),
-        (9893, 'Jiri', jiri@lut, 10000),
-        (9894, 'Merja', merjis@lut, 50);
+        VALUES (9891, 'Olli-pekka', 'op@lut', 1000),
+        (9892, 'Juho', 'juhis@lut', 1500),
+        (9893, 'Jiri', 'jiri@lut', 10000),
+        (9894, 'Merja', 'merjis@lut', 50),
+        (9895, 'Boss', 'boss@lut', 20000);
     '''
     sql6 = '''
     INSERT INTO employee_roles(
-            employee_id
+            employee_id,
             role
         )
         VALUES (9891, 'orja'),
         (9892, 'juoksupoika'),
         (9893, 'pomo'),
-        (9894, 'joulupukki');
+        (9894, 'joulupukki'),
+        (9895, 'ylipomo');
     '''
     cur.execute(sql)
-    ##cur.execute(sql2)
-    ##cur.execute(sql3)
-    ##cur.execute(sql4)
-    ###cur.execute(sql5)
-    ###cur.execute(sql6)
+    cur.execute(sql2)
+    cur.execute(sql3)
+    cur.execute(sql4)
+    cur.execute(sql5)
+    cur.execute(sql6)
     conn.commit()
 
     return None
+
+def queries():
+    EmployeesQuery = '''SELECT * from employees''' ##lists employees of the database
+    CostQuery = ''' SELECT * from orders WHERE total_cost > 50 ''' ## selects all orders which are over 50 (total cost)
+    Datequery = ''' SELECT * FROM Orders WHERE Order_Date='20200101' ''' ### selects an order made on the 1st day of 2020
+    BigBossQuery = ''' UPDATE employee_roles SET role = 'Juha-Matti Saksa' WHERE role = 'ylipomo'; select* from employee_roles''' ## switches ylipomo to juha-matti saksa (reksi)
+    
 
 
 def initDatabaseTables(conn):
@@ -232,7 +247,7 @@ def initDatabaseTables(conn):
         CREATE TABLE IF NOT EXISTS orders (
             order_id INTEGER PRIMARY KEY,
             customer_id INTEGER NOT NULL,
-            order_date DATE NOT NULL,
+            order_date DATE,
             total_cost FLOAT NOT NULL,
             FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
         );
