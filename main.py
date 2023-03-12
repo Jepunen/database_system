@@ -13,12 +13,14 @@ EMPLOYEE_ROLE_QUERY = '''
     ON employees.employee_id = employee_roles.employee_id;
     '''
 JOIN_QUERY = '''
-    SELECT customers.name as 'Name', orders.order_id as 'Order ID', orders.total_cost as 'Total cost', order_details.quantity as 'Quantity'
+    SELECT customers.name as 'Name', orders.order_id as 'Order ID', orders.total_cost as 'Total cost', products.name as 'Product', order_details.quantity as 'Quantity'
     FROM customers
     INNER JOIN orders
     ON customers.customer_id = orders.customer_id
     INNER JOIN order_details
-    ON orders.order_id = order_details.order_id;
+    ON orders.order_id = order_details.order_id
+    INNER JOIN products
+    ON order_details.product_id = products.product_id;
 '''
 
 def main():
@@ -74,7 +76,7 @@ def windowLoop(window, conn):
         elif event == 'List all customers':
             clearFields(window)
             cur = conn.cursor()
-            sql = 'SELECT * FROM customers'
+            sql = '''SELECT customer_id as 'ID', name as 'Name', email as 'Email', address as 'Address' FROM customers'''
             res = cur.execute(sql)
             window['multi'].print(from_db_cursor(res))
         elif event == 'type_combo' and values['type_combo'] == 'Update':
