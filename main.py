@@ -28,6 +28,8 @@ def main():
                     sg.InputText(key='insert_input_address',visible=False, size=10)
                 ],
                 [sg.Button('Update', key='apply_btn')],
+                [sg.Text('Search a customer by customer_id')],
+                [sg.InputText(size=15, key='search_input'), sg.Button('Search', key='search_btn')],
                 [sg.Combo(['Get all customers with orders', 'example 2'], key='search_combo', default_value='Get all customers with orders'), sg.Button('Search')],
                 [sg.Text('Output for tables')],
                 [sg.Multiline(key='multi', size=(50, 10), disabled=True)],
@@ -90,9 +92,22 @@ def windowLoop(window, conn):
         
         elif event == 'apply_btn':
             customerID = values['customer_id_input']
-            newValue = values['update_text']
-            column = values['update_combo']
-            updateCustomersTable(window, conn, column, newValue, customerID)
+            if values['type_combo'] == 'Update':
+                newValue = values['update_text']
+                column = values['update_combo']
+                updateCustomersTable(window, conn, column, newValue, customerID)
+            elif values['type_combo'] == 'Insert':
+                customerID = values['insert_input_id']
+                name = values['insert_input_name']
+                email = values['insert_input_email']
+                address = values['insert_input_address']
+                insertIntoCustomersTable(window, conn, customerID, name, email, address)
+            elif values['type_combo'] == 'Delete':
+                deleteFromCustomersTable(window, conn, customerID)
+
+        elif event == 'search_btn':
+            clearFields(window)
+            searchFromCustomers(conn, window, values['search_input'])
 
     window.close()
     return None
@@ -125,7 +140,6 @@ def connectToDB(db_name):
         print(e)
     return conn
 
-
 def updateCustomersTable(window, conn, column, newValue, customerID):
     cur = conn.cursor()
 
@@ -133,7 +147,34 @@ def updateCustomersTable(window, conn, column, newValue, customerID):
     cur.execute(sql)
     conn.commit()
 
-    window['multi'].update(f"customer's {customerID} {column} updated to {newValue}")
+    window['multi'].update(f"Customer's {customerID} {column} updated to {newValue}")
+    return None
+
+def insertIntoCustomersTable(window, conn, cid, name, email, address):
+    cur = conn.cursor()
+
+    cur.execute('INSERT INTO customers(customer_id, name, email, address) VALUES(?, ?, ?, ?);', [cid, name, email, address])
+    conn.commit()
+
+    window['multi'].update(f"Added {name} to customers")
+    return None
+
+def deleteFromCustomersTable(window, conn, cID):
+    cur = conn.cursor()
+
+    cur.execute('DELETE FROM customers WHERE customer_id = ?;', [cID])
+    conn.commit()
+
+    window['multi'].update(f"Deleted customer with ID {cID}")
+    return None
+
+def searchFromCustomers(conn, window, cID):
+
+    cur = conn.cursor()
+
+    for row in cur.execute('SELECT * FROM customers WHERE customer_id = ?', [cID]):
+        window['multi'].print(row)
+
     return None
 
 def addDataToTable(conn):
