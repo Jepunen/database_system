@@ -6,6 +6,14 @@ EMPLOYEES_QUERY = '''SELECT * from employees''' ##lists employees of the databas
 COST_QUERY = ''' SELECT * from orders WHERE total_cost > 50 ''' ## selects all orders which are over 50 (total cost)
 DATE_QUERY = ''' SELECT * FROM Orders WHERE Order_Date='20200101' ''' ### selects an order made on the 1st day of 2020
 BIGBOSS_QUERY = ''' UPDATE employee_roles SET role = 'Juha-Matti Saksa' WHERE role = 'ylipomo'; select * from employee_roles''' ## switches ylipomo to juha-matti saksa (reksi)
+JOIN_QUERY = '''
+    SELECT customers.name, orders.order_id, orders.total_cost, order_details.quantity
+    FROM customers
+    INNER JOIN orders
+    ON customers.customer_id = orders.customer_id
+    INNER JOIN order_details
+    ON orders.order_id = order_details.order_id;
+    '''
 
 def main():
 
@@ -34,7 +42,7 @@ def main():
                 [sg.Button('Update', key='apply_btn')],
                 [sg.Text('Search a customer by customer_id')],
                 [sg.InputText(size=15, key='search_input'), sg.Button('Search', key='search_btn')],
-                [sg.Combo(['List all employees', 'List orders with cost of over 50', 'List all orders from 1. Jan 2020', 'Switch ylipomo to juha-matti saksa (reksi)'], key='search_combo', default_value='List all employees', readonly=True), sg.Button('Search', key='combo_search')],
+                [sg.Combo(['List all employees', 'List orders with cost of over 50', 'List all orders from 1. Jan 2020', 'Switch ylipomo to juha-matti saksa (reksi)', 'List customers and their orders'], key='search_combo', default_value='List all employees', readonly=True), sg.Button('Search', key='combo_search')],
                 [sg.Text('Output for tables')],
                 [sg.Multiline(key='multi', size=(50, 10), disabled=True)],
                 [sg.Button('List all customers'), sg.Button('Exit')]
@@ -123,6 +131,8 @@ def windowLoop(window, conn):
                 searchWithQuery(window, conn, DATE_QUERY)
             elif values['search_combo'] == 'Switch ylipomo to juha-matti saksa (reksi)':
                 searchWithQuery(window, conn, BIGBOSS_QUERY)
+            elif values['search_combo'] == 'List customers and their orders':
+                searchWithQuery(window, conn, JOIN_QUERY)
         
     window.close()
     return None
@@ -219,7 +229,7 @@ def searchWithQuery(window, conn, query):
     try:
         cur = conn.cursor()
         results = cur.execute(query)
-
+        window['multi'].print(list(map(lambda x: x[0], cur.description)))
         for row in results:
             window['multi'].print(row)
     except Exception as e:
