@@ -221,7 +221,7 @@ def searchWithQuery(window, conn, query):
         results = cur.execute(query)
 
         for row in results:
-            print(row)
+            window['multi'].print(row)
     except Exception as e:
         window['multi'].print(e)
     return None
