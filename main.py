@@ -1,3 +1,8 @@
+##
+# Jere Puurunen - 0607312
+# Jericho Koskinen - 0607024
+##
+
 import sqlite3
 import PySimpleGUI as sg
 from prettytable import from_db_cursor
