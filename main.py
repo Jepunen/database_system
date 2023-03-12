@@ -5,7 +5,14 @@ import PySimpleGUI as sg
 EMPLOYEES_QUERY = '''SELECT * from employees''' ##lists employees of the database
 COST_QUERY = ''' SELECT * from orders WHERE total_cost > 50 ''' ## selects all orders which are over 50 (total cost)
 DATE_QUERY = ''' SELECT * FROM Orders WHERE Order_Date='20200101' ''' ### selects an order made on the 1st day of 2020
-BIGBOSS_QUERY = ''' UPDATE employee_roles SET role = 'Juha-Matti Saksa' WHERE role = 'ylipomo'; select * from employee_roles''' ## switches ylipomo to juha-matti saksa (reksi)
+DEFAULTROLE_QUERY = '''
+CREATE TRIGGER add_employee_role 
+AFTER INSERT ON employees 
+BEGIN
+  INSERT INTO employee_roles (employee_id, role)
+  VALUES (NEW.employee_id, 'Tuutori');
+END;'''
+
 
 def main():
 
