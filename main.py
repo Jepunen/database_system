@@ -318,7 +318,7 @@ def addDataToTable(conn):
                 employee_id,
                 role
             )
-            VALUES (9891, 'orja'),
+            VALUES (9891, 'Puurtarhuri'),
             (9892, 'juoksupoika'),
             (9893, 'pomo'),
             (9894, 'joulupukki'),
