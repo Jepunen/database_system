@@ -65,7 +65,7 @@ def main():
             ]
 
     # Create the Window
-    window = sg.Window('Window Title', layout)
+    window = sg.Window('Database manager', layout)
     windowLoop(window, conn)
     ### PySimpleGUI END ###
 
