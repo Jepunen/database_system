@@ -28,6 +28,9 @@ def main():
     db_name = 'database.sqlite'
     conn = connectToDB(db_name)
 
+    initDatabaseTables(conn)
+    addDataToTable(conn)
+
     ### PySimpleGUI ###
     # All the stuff inside your window.
     sg.theme('DarkPurple7')
@@ -335,73 +338,6 @@ def addDataToTable(conn):
     return None
 
 def initDatabaseTables(conn):
-    customers = '''
-        CREATE TABLE IF NOT EXISTS customers (
-            customer_id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            address TEXT
-        );
-    '''
-    
-    orders = '''
-        CREATE TABLE IF NOT EXISTS orders (
-            order_id INTEGER PRIMARY KEY,
-            customer_id INTEGER NOT NULL,
-            order_date DATE,
-            total_cost FLOAT NOT NULL,
-            FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON UPDATE CASCADE
-        );
-    '''
-    
-    products = '''
-        CREATE TABLE IF NOT EXISTS products (
-            product_id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
-            price FLOAT NOT NULL
-        );
-    '''
-
-    orderDetails = '''
-        CREATE TABLE IF NOT EXISTS order_details (
-            order_id INTEGER NOT NULL,
-            product_id INTEGER NOT NULL,
-            quantity INTEGER NOT NULL,
-            PRIMARY KEY (order_id, product_id),
-            FOREIGN KEY (order_id) REFERENCES orders(order_id), ON UPDATE CASCADE
-            FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
-        );
-    '''
-
-    employees = '''
-        CREATE TABLE IF NOT EXISTS employees (
-            employee_id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            salary FLOAT NOT NULL
-        );
-    '''
-
-    employee_roles = '''
-        CREATE TABLE IF NOT EXISTS employee_roles (
-            employee_id INTEGER NOT NULL,
-            role TEXT NOT NULL,
-            PRIMARY KEY (employee_id, role),
-            FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
-        );
-    '''
-    
-    cur = conn.cursor()
-
-    cur.execute(customers)
-    cur.execute(orders)
-    cur.execute(products)
-    cur.execute(orderDetails)
-    cur.execute(employees)
-    cur.execute(employee_roles)
-
-    conn.commit()
-
     try:
         customers = '''
             CREATE TABLE IF NOT EXISTS customers (
@@ -458,7 +394,7 @@ def initDatabaseTables(conn):
                 FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
             );
         '''
-        
+    
         cur = conn.cursor()
 
         cur.execute(customers)
@@ -469,7 +405,6 @@ def initDatabaseTables(conn):
         cur.execute(employee_roles)
 
         conn.commit()
-        return cur.lastrowid
     except Exception as e:
         print(e)
         return None
