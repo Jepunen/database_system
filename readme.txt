@@ -1,6 +1,22 @@
+----------------------------
 Jere Puurunen - 0607312
 Jericho Koskinen - 0607024
 
+TO INSTALL THE LIBRARIES NEEDED, RUN 'pip install -r requirements.txt'
+
+(if requirements.txt file doesn't exist, here's what it should include.)
+(Here you can also see the versions of all libraries used)
+requirements.txt = {
+    click==8.1.3
+    itsdangerous==2.1.2
+    Jinja2==3.1.2
+    MarkupSafe==2.1.2
+    prettytable==3.6.0
+    PySimpleGUI==4.60.4
+    wcwidth==0.2.6
+    Werkzeug==2.2.3
+}
+-----------------------------
 Queries used in the project:
 
 '''
