@@ -2,25 +2,25 @@ import sqlite3
 import PySimpleGUI as sg
 
 ### Queries ###
-EMPLOYEES_QUERY = '''SELECT * from employees''' ##lists employees of the database
-COST_QUERY = ''' SELECT * from orders WHERE total_cost > 50 ''' ## selects all orders which are over 50 (total cost)
-DATE_QUERY = ''' SELECT * FROM Orders WHERE Order_Date='20200101' ''' ### selects an order made on the 1st day of 2020
+EMPLOYEES_QUERY = '''SELECT employee_id as 'ID', name as 'Name', email as 'Email', salary as 'Salary (€)' from employees''' ##lists employees of the database
+COST_QUERY = '''SELECT order_id as 'Order ID', customer_id as 'Customer ID', order_date as 'Order date', total_cost as 'Total cost' from orders WHERE total_cost > 50 ''' ## selects all orders which are over 50 (total cost)
+DATE_QUERY = '''SELECT * FROM Orders WHERE Order_Date='20200101' ''' ### selects an order made on the 1st day of 2020
+DEFAULTROLE_QUERY = '''
+    CREATE TRIGGER add_employee_role 
+    AFTER INSERT ON employees 
+    BEGIN
+    INSERT INTO employee_roles (employee_id, role)
+    VALUES (NEW.employee_id, 'Tuutori');
+    END;
+'''
 JOIN_QUERY = '''
-    SELECT customers.name, orders.order_id, orders.total_cost, order_details.quantity
+    SELECT customers.name as 'Name', orders.order_id as 'Order ID', orders.total_cost as 'Total cost', order_details.quantity as 'Quantity'
     FROM customers
     INNER JOIN orders
     ON customers.customer_id = orders.customer_id
     INNER JOIN order_details
     ON orders.order_id = order_details.order_id;
-    '''
-DEFAULTROLE_QUERY = '''
-CREATE TRIGGER add_employee_role 
-AFTER INSERT ON employees 
-BEGIN
-  INSERT INTO employee_roles (employee_id, role)
-  VALUES (NEW.employee_id, 'Tuutori');
-END;'''
-
+'''
 
 def main():
 
